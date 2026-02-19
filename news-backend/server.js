@@ -6,6 +6,8 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
 const newsRoutes = require("./routes/news");
+const commentRoutes = require("./routes/comments");
+const bookmarkRoutes = require("./routes/bookmarks");
 
 const app = express();
 
@@ -38,6 +40,8 @@ connectDB();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/news", newsRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/bookmarks", bookmarkRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running...");

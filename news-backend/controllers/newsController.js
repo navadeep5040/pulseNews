@@ -22,7 +22,8 @@ const getNews = async (req, res) => {
         const news = await News.find(query).populate("author", "name").sort({ createdAt: -1 });
         res.status(200).json(news);
     } catch (error) {
-        res.status(500).json({ message: "Server Error" });
+        console.error("Get news error:", error);
+        res.status(500).json({ message: "Failed to fetch news: " + error.message });
     }
 };
 
@@ -43,13 +44,14 @@ const createNews = async (req, res) => {
         });
         res.status(201).json(news);
     } catch (error) {
-        res.status(500).json({ message: "Server Error" });
+        console.error("Create news error:", error);
+        res.status(500).json({ message: "Failed to create news: " + error.message });
     }
 };
 
 // @desc    Update news
 // @route   PUT /api/news/:id
-// @access  Private/Admin
+// @access  Private/Admin (own articles only)
 const updateNews = async (req, res) => {
     try {
         const news = await News.findById(req.params.id);
@@ -58,8 +60,10 @@ const updateNews = async (req, res) => {
             return res.status(404).json({ message: "News not found" });
         }
 
-        // Check user (optional, but good practice if multiple admins or strict ownership)
-        // For this requirement, any admin can update
+        // Only the author can update their own article
+        if (news.author.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Not authorized to edit this article" });
+        }
 
         const updatedNews = await News.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
@@ -67,13 +71,14 @@ const updateNews = async (req, res) => {
 
         res.status(200).json(updatedNews);
     } catch (error) {
-        res.status(500).json({ message: "Server Error" });
+        console.error("Update news error:", error);
+        res.status(500).json({ message: "Failed to update news: " + error.message });
     }
 };
 
 // @desc    Delete news
 // @route   DELETE /api/news/:id
-// @access  Private/Admin
+// @access  Private/Admin (own articles only)
 const deleteNews = async (req, res) => {
     try {
         const news = await News.findById(req.params.id);
@@ -82,16 +87,39 @@ const deleteNews = async (req, res) => {
             return res.status(404).json({ message: "News not found" });
         }
 
+        // Only the author can delete their own article
+        if (news.author.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Not authorized to delete this article" });
+        }
+
         await news.deleteOne();
 
         res.status(200).json({ id: req.params.id });
     } catch (error) {
-        res.status(500).json({ message: "Server Error" });
+        console.error("Delete news error:", error);
+        res.status(500).json({ message: "Failed to delete news: " + error.message });
+    }
+};
+
+// @desc    Get single news by ID
+// @route   GET /api/news/:id
+// @access  Public
+const getNewsById = async (req, res) => {
+    try {
+        const news = await News.findById(req.params.id).populate("author", "name");
+        if (!news) {
+            return res.status(404).json({ message: "Article not found" });
+        }
+        res.status(200).json(news);
+    } catch (error) {
+        console.error("Get news by id error:", error);
+        res.status(500).json({ message: "Failed to fetch article: " + error.message });
     }
 };
 
 module.exports = {
     getNews,
+    getNewsById,
     createNews,
     updateNews,
     deleteNews,

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getNews, createNews, updateNews, deleteNews } = require("../controllers/newsController");
+const { getNews, getNewsById, createNews, updateNews, deleteNews } = require("../controllers/newsController");
 const { protect, adminOnly } = require("../middleware/authMiddleware");
 
 router.route("/")
@@ -8,6 +8,7 @@ router.route("/")
   .post(protect, adminOnly, createNews);
 
 router.route("/:id")
+  .get(getNewsById)
   .put(protect, adminOnly, updateNews)
   .delete(protect, adminOnly, deleteNews);
 
