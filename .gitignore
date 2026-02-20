@@ -1,0 +1,29 @@
+# Pulsenews Root .gitignore
+
+# Dependencies
+node_modules/
+news-frontend/node_modules/
+news-backend/node_modules/
+
+# Production
+dist/
+news-frontend/dist/
+
+# Environment Variables
+.env
+news-backend/.env
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE / Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Document files (optional, but good to ignore if they aren't part of the code)
+*.pdf
+*.docx
