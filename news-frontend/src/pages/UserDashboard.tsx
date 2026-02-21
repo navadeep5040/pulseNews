@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import api from "../services/api";
 import "./Dashboard.css";
 
@@ -16,7 +17,6 @@ const UserDashboard = () => {
     const [news, setNews] = useState<NewsItem[]>([]);
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("");
-    const [expandedId, setExpandedId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -52,9 +52,6 @@ const UserDashboard = () => {
             year: "numeric",
         });
 
-    const toggleExpand = (id: string) => {
-        setExpandedId(expandedId === id ? null : id);
-    };
 
     return (
         <motion.div
@@ -129,52 +126,36 @@ const UserDashboard = () => {
                 </motion.div>
             ) : (
                 <motion.div className="news-grid" layout>
-                    <AnimatePresence>
-                        {filtered.map((item, i) => (
-                            <motion.div
-                                key={item._id}
-                                className={`news-card ${expandedId === item._id ? "expanded" : ""}`}
-                                layout
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ delay: i * 0.05 }}
-                                whileHover={{ y: -4 }}
-                                onClick={() => toggleExpand(item._id)}
-                            >
-                                <div className="card-top">
-                                    <span className="card-category">{item.category}</span>
-                                    <span className="card-date">{formatDate(item.createdAt)}</span>
-                                </div>
-                                <h3 className="card-title">{item.title}</h3>
-                                <AnimatePresence>
-                                    {expandedId === item._id ? (
-                                        <motion.p
-                                            className="card-content full"
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{ opacity: 1, height: "auto" }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                        >
-                                            {item.content}
-                                        </motion.p>
-                                    ) : (
-                                        <p className="card-content">
-                                            {item.content.substring(0, 120)}
-                                            {item.content.length > 120 ? "..." : ""}
-                                        </p>
-                                    )}
-                                </AnimatePresence>
-                                <div className="card-footer">
-                                    <span className="card-author">
-                                        ✍️ {item.author?.name || "Unknown"}
-                                    </span>
-                                    <span className="read-more-hint">
-                                        {expandedId === item._id ? "Click to close" : "Click to read"}
-                                    </span>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
+                    {filtered.map((item, i) => (
+                        <motion.div
+                            key={item._id}
+                            className="news-card"
+                            layout
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ delay: i * 0.05 }}
+                            whileHover={{ y: -4 }}
+                        >
+                            <div className="card-top">
+                                <span className="card-category">{item.category}</span>
+                                <span className="card-date">{formatDate(item.createdAt)}</span>
+                            </div>
+                            <h3 className="card-title">{item.title}</h3>
+                            <p className="card-content">
+                                {item.content.substring(0, 120)}
+                                {item.content.length > 120 ? "..." : ""}
+                            </p>
+                            <div className="card-footer">
+                                <span className="card-author">
+                                    ✍️ {item.author?.name || "Unknown"}
+                                </span>
+                                <Link to={`/article/${item._id}`} className="read-more-hint">
+                                    Read Full Article →
+                                </Link>
+                            </div>
+                        </motion.div>
+                    ))}
                 </motion.div>
             )}
         </motion.div>

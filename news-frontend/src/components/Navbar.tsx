@@ -38,6 +38,14 @@ const Navbar = () => {
                                     <span className="role-badge">{auth.user.role}</span>
                                 </span>
                             </li>
+                            <li className="nav-item">
+                                <Link
+                                    to="/"
+                                    className={`nav-link ${isActive("/") ? "active" : ""}`}
+                                >
+                                    🏠 Home
+                                </Link>
+                            </li>
                             {auth.user.role === "admin" && (
                                 <li className="nav-item">
                                     <Link
@@ -48,16 +56,38 @@ const Navbar = () => {
                                     </Link>
                                 </li>
                             )}
-                            {auth.user.role === "user" && (
-                                <li className="nav-item">
-                                    <Link
-                                        to="/dashboard"
-                                        className={`nav-link ${isActive("/dashboard") ? "active" : ""}`}
-                                    >
-                                        📰 My Feed
-                                    </Link>
-                                </li>
-                            )}
+                            <li className="nav-item">
+                                <Link
+                                    to="/dashboard"
+                                    className={`nav-link ${isActive("/dashboard") ? "active" : ""}`}
+                                >
+                                    📰 Feed
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link
+                                    to="/bookmarks"
+                                    className={`nav-link ${isActive("/bookmarks") ? "active" : ""}`}
+                                >
+                                    🔖 Bookmarks
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link
+                                    to="/profile"
+                                    className={`nav-link ${isActive("/profile") ? "active" : ""}`}
+                                >
+                                    👤 Profile
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link
+                                    to="/about"
+                                    className={`nav-link ${isActive("/about") ? "active" : ""}`}
+                                >
+                                    ℹ️ About
+                                </Link>
+                            </li>
                             <li className="nav-item">
                                 <motion.button
                                     onClick={handleLogout}
@@ -71,6 +101,22 @@ const Navbar = () => {
                         </>
                     ) : (
                         <>
+                            <li className="nav-item">
+                                <Link
+                                    to="/"
+                                    className={`nav-link ${isActive("/") ? "active" : ""}`}
+                                >
+                                    🏠 Home
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link
+                                    to="/about"
+                                    className={`nav-link ${isActive("/about") ? "active" : ""}`}
+                                >
+                                    ℹ️ About
+                                </Link>
+                            </li>
                             <li className="nav-item">
                                 <Link
                                     to="/login"

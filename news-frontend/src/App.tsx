@@ -1,10 +1,15 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserDashboard from "./pages/UserDashboard";
+import LandingPage from "./pages/LandingPage";
+import ArticleDetail from "./pages/ArticleDetail";
+import Profile from "./pages/Profile";
+import Bookmarks from "./pages/Bookmarks";
+import About from "./pages/About";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 
@@ -16,9 +21,10 @@ function App() {
           <Navbar />
           <div className="page-content">
             <Routes>
-              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/about" element={<About />} />
 
               <Route
                 path="/admin"
@@ -34,6 +40,33 @@ function App() {
                 element={
                   <ProtectedRoute roles={["user", "admin"]}>
                     <UserDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/article/:id"
+                element={
+                  <ProtectedRoute roles={["user", "admin"]}>
+                    <ArticleDetail />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute roles={["user", "admin"]}>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/bookmarks"
+                element={
+                  <ProtectedRoute roles={["user", "admin"]}>
+                    <Bookmarks />
                   </ProtectedRoute>
                 }
               />

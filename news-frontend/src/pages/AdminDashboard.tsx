@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import api from "../services/api";
+import { AuthContext } from "../context/AuthContext";
 import "./Dashboard.css";
 
 interface NewsItem {
@@ -9,9 +10,11 @@ interface NewsItem {
     title: string;
     content: string;
     category: string;
+    author?: { _id: string; name: string };
 }
 
 const AdminDashboard = () => {
+    const auth = useContext(AuthContext);
     const [news, setNews] = useState<NewsItem[]>([]);
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -30,7 +33,11 @@ const AdminDashboard = () => {
         setFetching(true);
         try {
             const res = await api.get("/news");
-            setNews(res.data);
+            // Only show articles authored by the current admin
+            const myArticles = res.data.filter(
+                (item: NewsItem) => item.author?._id === auth?.user?._id
+            );
+            setNews(myArticles);
         } catch {
             toast.error("Failed to load articles");
         } finally {
@@ -55,7 +62,8 @@ const AdminDashboard = () => {
             setEditId(null);
             fetchNews();
         } catch (err: any) {
-            toast.error(err.response?.data?.message || "Operation failed");
+            const errorMessage = err.response?.data?.message || err.message || "Operation failed";
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
